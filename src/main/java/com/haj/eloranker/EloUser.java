@@ -1,0 +1,67 @@
+package com.haj.eloranker;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+@Entity
+public class EloUser {
+	@Id
+	@GeneratedValue
+	private Long id;
+	@NotNull
+	private String name;
+	private Integer elo;
+	@OneToMany
+	private List<Game> gamesPlayed;
+
+	public EloUser() {
+	}
+
+	public EloUser(String name) {
+		System.out.println("Creating EloUser object");
+		this.name = name;
+		this.elo = 1200;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getElo() {
+		return elo;
+	}
+
+	public void setElo(Integer elo) {
+		this.elo = elo;
+	}
+
+	public List<Game> getGamesPlayed() {
+		return gamesPlayed;
+	}
+
+	public void setGamesPlayed(List<Game> gamesPlayed) {
+		this.gamesPlayed = gamesPlayed;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+}

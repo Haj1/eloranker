@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>ELO Ranking System</title>
+</head>
+<body>
+    <div>
+        <h3>Rankings</h3>
+        <table>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>ELO</th>
+            <tr th:each="user,iter: ${users}">
+                <b><td th:text="${iter.index} + ')'"></td></b>
+                <td th:text="${user.name}" />
+                <td th:text="${user.elo}" />
+            </tr>
+        </table>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(games)}">
+        <h3>Last 10 Games</h3>
+        <table>
+            <th>Winner</th>
+            <th>Loser</th>
+            <tr th:each="game: ${games}">
+                <td th:text="${game.winner}" />
+                <td th:text="${game.loser}" />
+            </tr>
+        </table>
+    </div>
+
+    <h3>Create new User</h3>
+    <form action="#" th:action="@{/api/eloUsers}" th:object="${eloUser}" method="post">
+        <table border="1">
+            <tr>
+                <td><label>Name: </label></td>
+                <td><input type="text" th:field="*{name}" /></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+    </form>
+
+    <h3>Create new Game</h3>
+    <form action="#" th:action="@{/api/games}" th:object="${game}" method="post">
+        <table border="1">
+            <tr>
+                <td><label>Winner: </label></td>
+                <td>
+                    <select th:field="${game.winner}">
+                        <option value="" th:text="'Select Winner...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label>Loser: </label></td>
+                <td>
+                    <select th:field="${game.loser}">
+                        <option value="" th:text="'Select Loser...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+    </form>
+
+<script>
+
+</script>
+</body>
+</html>
