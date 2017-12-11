@@ -12,7 +12,7 @@
             <th>Name</th>
             <th>ELO</th>
             <tr th:each="user,iter: ${users}">
-                <b><td th:text="${iter.index} + ')'"></td></b>
+                <b><td th:text="${iter.index + 1} + ')'"></td></b>
                 <td th:text="${user.name}" />
                 <td th:text="${user.elo}" />
             </tr>
