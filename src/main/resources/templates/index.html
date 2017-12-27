@@ -6,7 +6,7 @@
 </head>
 <body>
     <div>
-        <h3>Rankings</h3>
+        <h3>Individual Rankings</h3>
         <table>
             <th>Rank</th>
             <th>Name</th>
@@ -19,6 +19,21 @@
         </table>
     </div>
 
+    <div>
+        <h3>Most Successful Doubles Pairs</h3>
+        <table>
+            <th>Rank</th>
+            <th>Pair</th>
+            <th>Success Ratio</th>
+            <tr th:each="pair,iter: ${pairs}">
+                <b><td th:text="${iter.index + 1} + ')'"></td></b>
+                <td th:text="${pair.player1.name} + ' and ' + ${pair.player2.name}"></td>
+                <!--<td th:text="${pair.successPercentage} + '%'"></td>-->
+                <td th:text="${#numbers.formatDecimal(pair.successPercentage,2,2)} + '%'"></td>
+            </tr>
+        </table>
+    </div>
+
     <div th:if="${not #lists.isEmpty(doublesGames)}">
         <h3>Last 10 Doubles Games</h3>
         <table>
@@ -27,8 +42,8 @@
             <th>Losers</th>
             <tr th:each="game: ${doublesGames}">
                 <td th:text="${game.timestamp}" />
-                <td th:text="${game.winner1} + ' and ' + ${game.winner2}" />
-                <td th:text="${game.loser1} + ' and ' + ${game.loser2}" />
+                <td th:text="${game.winner1.name} + ' and ' + ${game.winner2.name}" />
+                <td th:text="${game.loser1.name} + ' and ' + ${game.loser2.name}" />
             </tr>
         </table>
     </div>
@@ -41,8 +56,8 @@
             <th>Loser</th>
             <tr th:each="game: ${games}">
                 <td th:text="${game.timestamp}" />
-                <td th:text="${game.winner}" />
-                <td th:text="${game.loser}" />
+                <td th:text="${game.winner.name}" />
+                <td th:text="${game.loser.name}" />
             </tr>
         </table>
     </div>

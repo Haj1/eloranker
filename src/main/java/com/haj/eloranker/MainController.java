@@ -1,12 +1,14 @@
 package com.haj.eloranker;
 
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.expression.Lists;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class MainController {
@@ -28,6 +30,7 @@ public class MainController {
 		model.addAttribute("game", new Game());
 		model.addAttribute("doublesGame", new DoublesGame());
 		model.addAttribute("doublesGames", getTop10DoublesGames());
+		model.addAttribute("pairs", getBestDoublesPairs());
 		return "index";
 	}
 
@@ -64,6 +67,36 @@ public class MainController {
 		doublesGameRepository.save(doublesGame);
 		calculateNewElosFromDoubles(doublesGame);
 		return "redirect:../../";
+	}
+
+	@GetMapping("/api/doublesCombos") @ResponseBody
+	public List<DoublesPair> getBestDoublesPairs() {
+		Iterable<DoublesGame> allDoublesGames = doublesGameRepository.findAll();
+		List<DoublesPair> pairs = new ArrayList<>();
+		for(DoublesGame game : allDoublesGames) {
+			DoublesPair winnerOption1 = new DoublesPair(game.getWinner1(), game.getWinner2(), 0F);
+
+			// protect against duplicates
+			if(!pairs.contains(winnerOption1) ){
+				pairs.add(new DoublesPair(game.getWinner1(), game.getWinner2(), 0F));
+			}
+
+			DoublesPair loserOption1 = new DoublesPair(game.getLoser1(), game.getLoser2(), 0F);
+			if(!pairs.contains(loserOption1) ){
+				pairs.add(new DoublesPair(game.getLoser1(), game.getLoser2(), 0F));
+			}
+		}
+
+		// set success ratios of pairs
+		for(DoublesPair pair : pairs) {
+			float successRatio = successRatioOfPair(pair);
+			pair.setSuccessPercentage(successRatio * 100);
+		}
+
+		// sort pairs in order of success
+		pairs.sort(Comparator.comparing(DoublesPair::getSuccessPercentage).reversed());
+
+		return pairs;
 	}
 
 	@GetMapping("/api/games") @ResponseBody
@@ -112,7 +145,6 @@ public class MainController {
 
 		// work out difference between old elo and new elo
 		int eloDiff = newWinnersAverageElo - winnersAverageElo;
-		System.out.println("ELO Diff: " + eloDiff);
 
 		EloUser winner1 = eloUserRepository.findOne(doublesGame.getWinner1().getId());
 		EloUser winner2 = eloUserRepository.findOne(doublesGame.getWinner2().getId());
@@ -129,5 +161,22 @@ public class MainController {
 		eloUserRepository.save(winner2);
 		eloUserRepository.save(loser1);
 		eloUserRepository.save(loser2);
+	}
+
+	private float successRatioOfPair(DoublesPair pair) {
+		float successRatio = 0;
+		long won = doublesGameRepository.countByWinner1AndWinner2(pair.getPlayer1(), pair.getPlayer2());
+		long lost = doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer1(), pair.getPlayer2());
+
+		// if won is, successRatio should be 0.
+		if (won != 0) {
+			if (lost == 0) {
+				// win is non-zero. lost is zero.
+				successRatio = 1;
+			} else {
+				successRatio = (float) won / (won + lost);
+			}
+		}
+		return successRatio;
 	}
 }

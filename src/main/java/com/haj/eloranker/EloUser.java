@@ -68,7 +68,11 @@ public class EloUser {
 
 	@Override
 	public String toString() {
-		return name;
+		return "EloUser{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", elo=" + elo +
+				'}';
 	}
 
 }
