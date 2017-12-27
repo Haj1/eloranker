@@ -55,7 +55,7 @@ public class MainController {
 
 	@GetMapping("/api/top10Games") @ResponseBody
 	public List<Game> getTop10Games() {
-		List<Game> games = gameRepository.findTop10ByOrderByTimestampAsc();
+		List<Game> games = gameRepository.findTop10ByOrderByTimestampDesc();
 		return games;
 	}
 
