@@ -22,9 +22,11 @@
     <div th:if="${not #lists.isEmpty(games)}">
         <h3>Last 10 Games</h3>
         <table>
+            <th>Date</th>
             <th>Winner</th>
             <th>Loser</th>
             <tr th:each="game: ${games}">
+                <td th:text="${game.timestamp}" />
                 <td th:text="${game.winner}" />
                 <td th:text="${game.loser}" />
             </tr>
