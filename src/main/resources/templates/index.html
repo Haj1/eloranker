@@ -46,8 +46,45 @@
         </table>
     </form>
 
-    <h3>Create new Game</h3>
-    <form action="#" th:action="@{/api/games}" th:object="${game}" method="post">
+    <h3>Create new <strong>Doubles</strong> Game</h3>
+    <form action="#" th:action="@{/api/games/doubles}" th:object="${doublesGame}" method="post">
+        <table border="1">
+            <tr>
+                <td><label>Winners: </label></td>
+                <td>
+                    <select th:field="${doublesGame.winner1}">
+                        <option value="" th:text="'Select Winner...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                </td>
+                <td>
+                    <select th:field="${doublesGame.winner2}">
+                        <option value="" th:text="'Select Winner...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label>Loser: </label></td>
+                <td>
+                    <select th:field="${doublesGame.loser1}">
+                        <option value="" th:text="'Select Loser...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                    <select th:field="${doublesGame.loser2}">
+                        <option value="" th:text="'Select Loser...'"></option>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+    </form>
+
+    <h3>Create new <strong>Singles</strong> Game</h3>
+    <form action="#" th:action="@{/api/games/singles}" th:object="${game}" method="post">
         <table border="1">
             <tr>
                 <td><label>Winner: </label></td>

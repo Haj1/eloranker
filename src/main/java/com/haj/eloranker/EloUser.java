@@ -14,6 +14,8 @@ public class EloUser {
 	private Integer elo;
 	@OneToMany
 	private List<Game> gamesPlayed;
+	@OneToMany
+	private List<DoublesGame> doublesGamesPlayed;
 
 	public EloUser() {
 	}
@@ -54,6 +56,14 @@ public class EloUser {
 
 	public void setGamesPlayed(List<Game> gamesPlayed) {
 		this.gamesPlayed = gamesPlayed;
+	}
+
+	public List<DoublesGame> getDoublesGamesPlayed() {
+		return doublesGamesPlayed;
+	}
+
+	public void setDoublesGamesPlayed(List<DoublesGame> doublesGamesPlayed) {
+		this.doublesGamesPlayed = doublesGamesPlayed;
 	}
 
 	@Override

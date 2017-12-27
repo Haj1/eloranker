@@ -17,12 +17,16 @@ public class MainController {
 	@Autowired
 	private GameRepository gameRepository;
 
+	@Autowired
+	private DoublesGameRepository doublesGameRepository;
+
 	@RequestMapping("/")
 	public String index(Model model) {
 		model.addAttribute("users", getEloUsers());
 		model.addAttribute("eloUser", new EloUser());
 		model.addAttribute("games", getTop10Games());
 		model.addAttribute("game", new Game());
+		model.addAttribute("doublesGame", new DoublesGame());
 		return "index";
 	}
 
@@ -39,13 +43,31 @@ public class MainController {
 		return eloUserRepository.findAllByOrderByEloDesc();
 	}
 
-	@PostMapping("/api/games")
-	public String createGame(@ModelAttribute Game game) {
+	@PostMapping("/api/games/singles")
+	public String createSinglesGame(@ModelAttribute Game game) {
 		if(game.getWinner() == null || game.getLoser() == null) return "redirect:../";
 		game.setTimestamp(LocalDate.now());
 		gameRepository.save(game);
-		calculateNewElos(game);
-		return "redirect:../";
+		calculateNewElosFromSingles(game);
+		return "redirect:../../";
+	}
+
+	@PostMapping("/api/games/doubles")
+	public String createDoublesGame(@ModelAttribute DoublesGame doublesGame) {
+		if(doublesGame.getWinner1() == null ||
+				doublesGame.getWinner2() == null ||
+				doublesGame.getLoser1() == null ||
+				doublesGame.getLoser2() == null) return "redirect:../";
+
+		doublesGame.setTimestamp(LocalDate.now());
+
+		// save new game
+		doublesGameRepository.save(doublesGame);
+
+		// doubles logic here
+		calculateNewElosFromDoubles(doublesGame);
+
+		return "redirect:../../";
 	}
 
 	@GetMapping("/api/games") @ResponseBody
@@ -53,13 +75,15 @@ public class MainController {
 		return gameRepository.findAllByOrderByTimestamp();
 	}
 
+	// TODO: Doubles games endpoints
+
 	@GetMapping("/api/top10Games") @ResponseBody
 	public List<Game> getTop10Games() {
 		List<Game> games = gameRepository.findTop10ByOrderByTimestampDesc();
 		return games;
 	}
 
-	private void calculateNewElos(Game game) {
+	private void calculateNewElosFromSingles(Game game) {
 		boolean isNewbie = false;
 		if(game.getWinner().getGamesPlayed().size() <= 3) isNewbie = true;
 
@@ -73,5 +97,33 @@ public class MainController {
 
 		eloUserRepository.save(winner);
 		eloUserRepository.save(loser);
+	}
+
+	private void calculateNewElosFromDoubles(DoublesGame doublesGame) {
+		int winnersAverageElo = (doublesGame.getWinner1().getElo() + doublesGame.getWinner2().getElo()) / 2;
+		int losersAverageElo = (doublesGame.getLoser1().getElo() + doublesGame.getLoser2().getElo()) / 2;
+
+		// ignore newbie bonus for doubles?
+		int newWinnersAverageElo = EloLogic.getNewRating(winnersAverageElo, losersAverageElo, 1, false);
+
+		// work out difference between old elo and new elo
+		int eloDiff = newWinnersAverageElo - winnersAverageElo;
+		System.out.println("ELO Diff: " + eloDiff);
+
+		EloUser winner1 = eloUserRepository.findOne(doublesGame.getWinner1().getId());
+		EloUser winner2 = eloUserRepository.findOne(doublesGame.getWinner2().getId());
+		EloUser loser1 = eloUserRepository.findOne(doublesGame.getLoser1().getId());
+		EloUser loser2 = eloUserRepository.findOne(doublesGame.getLoser2().getId());
+
+		// update each player's elo
+		winner1.setElo(winner1.getElo() + eloDiff);
+		winner2.setElo(winner2.getElo() + eloDiff);
+		loser1.setElo(loser1.getElo() - eloDiff);
+		loser2.setElo(loser2.getElo() - eloDiff);
+
+		eloUserRepository.save(winner1);
+		eloUserRepository.save(winner2);
+		eloUserRepository.save(loser1);
+		eloUserRepository.save(loser2);
 	}
 }
