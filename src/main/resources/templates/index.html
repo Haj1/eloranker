@@ -28,7 +28,6 @@
             <tr th:each="pair,iter: ${pairs}">
                 <b><td th:text="${iter.index + 1} + ')'"></td></b>
                 <td th:text="${pair.player1.name} + ' and ' + ${pair.player2.name}"></td>
-                <!--<td th:text="${pair.successPercentage} + '%'"></td>-->
                 <td th:text="${#numbers.formatDecimal(pair.successPercentage,2,2)} + '%'"></td>
             </tr>
         </table>

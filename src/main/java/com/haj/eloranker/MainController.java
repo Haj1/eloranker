@@ -37,6 +37,7 @@ public class MainController {
 	@PostMapping("/api/eloUsers")
 	public String createEloUser(@ModelAttribute EloUser eloUser) {
 		if(eloUser.getName() == null || eloUser.getName().equals("")) return "redirect:../";
+		// Default ELO Ranking
 		eloUser.setElo(1200);
 		eloUserRepository.save(eloUser);
 		return "redirect:../";
