@@ -60,13 +60,8 @@ public class MainController {
 				doublesGame.getLoser2() == null) return "redirect:../";
 
 		doublesGame.setTimestamp(LocalDate.now());
-
-		// save new game
 		doublesGameRepository.save(doublesGame);
-
-		// doubles logic here
 		calculateNewElosFromDoubles(doublesGame);
-
 		return "redirect:../../";
 	}
 
@@ -75,12 +70,20 @@ public class MainController {
 		return gameRepository.findAllByOrderByTimestamp();
 	}
 
-	// TODO: Doubles games endpoints
-
 	@GetMapping("/api/top10Games") @ResponseBody
 	public List<Game> getTop10Games() {
-		List<Game> games = gameRepository.findTop10ByOrderByTimestampDesc();
-		return games;
+		return gameRepository.findTop10ByOrderByTimestampDesc();
+	}
+
+	@GetMapping("/api/doublesGames") @ResponseBody
+	public List<DoublesGame> getDoublesGames() {
+		return doublesGameRepository.findAllByOrderByTimestamp();
+	}
+
+
+	@GetMapping("/api/top10DoublesGames") @ResponseBody
+	public List<DoublesGame> getTop10DoublesGames() {
+		return doublesGameRepository.findTop10ByOrderByTimestampDesc();
 	}
 
 	private void calculateNewElosFromSingles(Game game) {
