@@ -27,6 +27,7 @@ public class MainController {
 		model.addAttribute("games", getTop10Games());
 		model.addAttribute("game", new Game());
 		model.addAttribute("doublesGame", new DoublesGame());
+		model.addAttribute("doublesGames", getTop10DoublesGames());
 		return "index";
 	}
 

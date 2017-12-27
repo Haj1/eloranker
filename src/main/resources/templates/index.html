@@ -19,8 +19,22 @@
         </table>
     </div>
 
+    <div th:if="${not #lists.isEmpty(doublesGames)}">
+        <h3>Last 10 Doubles Games</h3>
+        <table>
+            <th>Date</th>
+            <th>Winners</th>
+            <th>Losers</th>
+            <tr th:each="game: ${doublesGames}">
+                <td th:text="${game.timestamp}" />
+                <td th:text="${game.winner1} + ' and ' + ${game.winner2}" />
+                <td th:text="${game.loser1} + ' and ' + ${game.loser2}" />
+            </tr>
+        </table>
+    </div>
+
     <div th:if="${not #lists.isEmpty(games)}">
-        <h3>Last 10 Games</h3>
+        <h3>Last 10 Singles Games</h3>
         <table>
             <th>Date</th>
             <th>Winner</th>
