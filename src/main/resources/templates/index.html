@@ -19,7 +19,7 @@
         </table>
     </div>
 
-    <div>
+    <div th:if="${not #lists.isEmpty(pairs)}">
         <h3>Most Successful Doubles Pairs</h3>
         <table>
             <th>Rank</th>
