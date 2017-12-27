@@ -85,6 +85,8 @@
                         <option value="" th:text="'Select Loser...'"></option>
                         <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
                     </select>
+                </td>
+                <td>
                     <select th:field="${doublesGame.loser2}">
                         <option value="" th:text="'Select Loser...'"></option>
                         <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
