@@ -2,6 +2,7 @@ package com.haj.eloranker;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,16 +13,15 @@ public class EloUser {
 	@NotNull @Column(unique = true)
 	private String name;
 	private Integer elo;
-	@OneToMany
-	private List<Game> gamesPlayed;
-	@OneToMany
-	private List<DoublesGame> doublesGamesPlayed;
+	@Transient
+	private List<Game> gamesPlayed = new ArrayList<>();
+	@Transient
+	private List<DoublesGame> doublesGamesPlayed = new ArrayList<>();
 
 	public EloUser() {
 	}
 
 	public EloUser(String name) {
-		System.out.println("Creating EloUser object");
 		this.name = name;
 		this.elo = 1200;
 	}

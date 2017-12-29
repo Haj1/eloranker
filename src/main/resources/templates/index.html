@@ -11,10 +11,14 @@
             <th>Rank</th>
             <th>Name</th>
             <th>ELO</th>
+            <th>Singles Games played</th>
+            <th>Doubles Games played</th>
             <tr th:each="user,iter: ${users}">
                 <b><td th:text="${iter.index + 1} + ')'"></td></b>
                 <td th:text="${user.name}" />
                 <td th:text="${user.elo}" />
+                <td th:text="${#lists.size(user.gamesPlayed)}" />
+                <td th:text="${#lists.size(user.doublesGamesPlayed)}" />
             </tr>
         </table>
     </div>

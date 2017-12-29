@@ -9,6 +9,10 @@ public interface DoublesGameRepository extends CrudRepository<DoublesGame, Long>
 	List<DoublesGame> findTop10ByOrderByTimestampDesc();
 	List<DoublesGame> findByWinner1AndWinner2(EloUser winner1, EloUser winner2);
 	List<DoublesGame> findByLoser1AndLoser2(EloUser loser1, EloUser loser2);
+	List<DoublesGame> findByWinner1(EloUser winner1);
+	List<DoublesGame> findByWinner2(EloUser winner2);
+	List<DoublesGame> findByLoser1(EloUser loser1);
+	List<DoublesGame> findByLoser2(EloUser loser2);
 	long countByWinner1AndWinner2(EloUser winner1, EloUser winner2);
 	long countByLoser1AndLoser2(EloUser loser1, EloUser loser2);
 }

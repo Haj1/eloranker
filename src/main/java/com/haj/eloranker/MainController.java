@@ -45,7 +45,23 @@ public class MainController {
 
 	@GetMapping("/api/eloUsers") @ResponseBody
 	public List<EloUser> getEloUsers() {
-		return eloUserRepository.findAllByOrderByEloDesc();
+		List<EloUser> users = eloUserRepository.findAllByOrderByEloDesc();
+
+		// populate games played
+		for(EloUser user : users) {
+			List<Game> singlesGames = new ArrayList<>();
+			singlesGames.addAll(gameRepository.findAllByWinner(user));
+			singlesGames.addAll(gameRepository.findAllByLoser(user));
+			user.setGamesPlayed(singlesGames);
+
+			List<DoublesGame> doublesGames = new ArrayList<>();
+			doublesGames.addAll(doublesGameRepository.findByWinner1(user));
+			doublesGames.addAll(doublesGameRepository.findByWinner2(user));
+			doublesGames.addAll(doublesGameRepository.findByLoser1(user));
+			doublesGames.addAll(doublesGameRepository.findByLoser2(user));
+			user.setDoublesGamesPlayed(doublesGames);
+		}
+		return users;
 	}
 
 	@PostMapping("/api/games/singles")
@@ -58,15 +74,15 @@ public class MainController {
 	}
 
 	@PostMapping("/api/games/doubles")
-	public String createDoublesGame(@ModelAttribute DoublesGame doublesGame) {
-		if(doublesGame.getWinner1() == null ||
-				doublesGame.getWinner2() == null ||
-				doublesGame.getLoser1() == null ||
-				doublesGame.getLoser2() == null) return "redirect:../";
+	public String createDoublesGame(@ModelAttribute DoublesGame game) {
+		if(game.getWinner1() == null ||
+				game.getWinner2() == null ||
+				game.getLoser1() == null ||
+				game.getLoser2() == null) return "redirect:../";
 
-		doublesGame.setTimestamp(LocalDate.now());
-		doublesGameRepository.save(doublesGame);
-		calculateNewElosFromDoubles(doublesGame);
+		game.setTimestamp(LocalDate.now());
+		doublesGameRepository.save(game);
+		calculateNewElosFromDoubles(game);
 		return "redirect:../../";
 	}
 
