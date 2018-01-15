@@ -183,7 +183,11 @@ public class MainController {
 	private float successRatioOfPair(DoublesPair pair) {
 		float successRatio = 0;
 		long won = doublesGameRepository.countByWinner1AndWinner2(pair.getPlayer1(), pair.getPlayer2());
+		// account for order being the other way around
+		won = won + doublesGameRepository.countByWinner1AndWinner2(pair.getPlayer2(), pair.getPlayer1());
 		long lost = doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer1(), pair.getPlayer2());
+		// account for order being the other way around
+		lost = lost + doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer2(), pair.getPlayer1());
 
 		// if won is, successRatio should be 0.
 		if (won != 0) {
