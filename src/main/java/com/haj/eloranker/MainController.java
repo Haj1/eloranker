@@ -1,11 +1,9 @@
 package com.haj.eloranker;
 
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.expression.Lists;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -91,33 +89,41 @@ public class MainController {
 		Iterable<DoublesGame> allDoublesGames = doublesGameRepository.findAll();
 		List<DoublesPair> pairs = new ArrayList<>();
 		for(DoublesGame game : allDoublesGames) {
-			DoublesPair winnerOption1 = new DoublesPair(game.getWinner1(), game.getWinner2(), 0F);
+			DoublesPair winnerOption1 = new DoublesPair(game.getWinner1(), game.getWinner2());
 
 			// protect against duplicates
 			if(!pairs.contains(winnerOption1) ){
-				pairs.add(new DoublesPair(game.getWinner1(), game.getWinner2(), 0F));
+				pairs.add(new DoublesPair(game.getWinner1(), game.getWinner2()));
 			}
 
-			DoublesPair loserOption1 = new DoublesPair(game.getLoser1(), game.getLoser2(), 0F);
+			DoublesPair loserOption1 = new DoublesPair(game.getLoser1(), game.getLoser2());
 			if(!pairs.contains(loserOption1) ){
-				pairs.add(new DoublesPair(game.getLoser1(), game.getLoser2(), 0F));
+				pairs.add(new DoublesPair(game.getLoser1(), game.getLoser2()));
 			}
 		}
+
+		// TODO set number of games won and lost for each pair
+        // TODO really this should be saved against actual user
+
 
 		// set success ratios of pairs
         ListIterator<DoublesPair> iter = pairs.listIterator();
         while(iter.hasNext()) {
 		    DoublesPair pair = iter.next();
-			PairStats pairStats = successRatioOfPair(pair);
-			if(pairStats.getNumberOfGamesPlayed() > 5) {
-                pair.setSuccessPercentage(pairStats.getSuccessRatio() * 100);
+			PairStats pairStats = calculatePairStats(pair);
+			if(pairStats.getNumberOfGamesWon() + pairStats.getNumberOfGamesLost() > 4) {
+                pair.setPairStats(pairStats);
             } else {
 			    iter.remove();
             }
 		}
 
-		// sort pairs in order of success
-		pairs.sort(Comparator.comparing(DoublesPair::getSuccessPercentage).reversed());
+		// sort pairs in order of success.
+        // Yes, I'm sure there's a better lambda way to do this
+		Collections.sort(pairs, (o1, o2) -> {
+            if(o1.getPairStats().getSuccessPercentage() > o2.getPairStats().getSuccessPercentage()) return -1;
+            else return 1;
+        });
 
 		return pairs;
 	}
@@ -186,7 +192,7 @@ public class MainController {
 		eloUserRepository.save(loser2);
 	}
 
-	private PairStats successRatioOfPair(DoublesPair pair) {
+	private PairStats calculatePairStats(DoublesPair pair) {
 		float successRatio = 0;
 		long won = doublesGameRepository.countByWinner1AndWinner2(pair.getPlayer1(), pair.getPlayer2());
 		// account for order being the other way around
@@ -194,8 +200,6 @@ public class MainController {
 		long lost = doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer1(), pair.getPlayer2());
 		// account for order being the other way around
 		lost = lost + doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer2(), pair.getPlayer1());
-
-		long numberOfGamesPlayed = won + lost;
 
         // if won is, successRatio should be 0.
         if (won != 0) {
@@ -206,6 +210,6 @@ public class MainController {
                 successRatio = (float) won / (won + lost);
             }
         }
-        return new PairStats(successRatio, numberOfGamesPlayed);
+        return new PairStats(successRatio * 100, won, lost);
 	}
 }

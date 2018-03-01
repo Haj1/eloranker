@@ -5,12 +5,11 @@ import java.util.Objects;
 public class DoublesPair {
 	private EloUser player1;
 	private EloUser player2;
-	private float successPercentage;
+	private PairStats pairStats;
 
-	public DoublesPair(EloUser player1, EloUser player2, float successPercentage) {
+	public DoublesPair(EloUser player1, EloUser player2) {
 		this.player1 = player1;
 		this.player2 = player2;
-		this.successPercentage = successPercentage;
 	}
 
 	public EloUser getPlayer1() {
@@ -29,12 +28,12 @@ public class DoublesPair {
 		this.player2 = player2;
 	}
 
-	public float getSuccessPercentage() {
-		return successPercentage;
+	public PairStats getPairStats() {
+		return pairStats;
 	}
 
-	public void setSuccessPercentage(float successPercentage) {
-		this.successPercentage = successPercentage;
+	public void setPairStats(PairStats pairStats) {
+		this.pairStats = pairStats;
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class DoublesPair {
 		return "DoublesPair{" +
 				"player1=" + player1 +
 				", player2=" + player2 +
-				", successPercentage=" + successPercentage +
+				", pairStats=" + pairStats +
 				'}';
 	}
 

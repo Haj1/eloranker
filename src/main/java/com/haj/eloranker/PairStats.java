@@ -1,27 +1,37 @@
 package com.haj.eloranker;
 
 public class PairStats {
-    private float successRatio;
-    private long numberOfGamesPlayed;
+    private float successPercentage;
+    private long numberOfGamesWon;
+    private long numberOfGamesLost;
 
-    public PairStats(float successRatio, long numberOfGamesPlayed) {
-        this.successRatio = successRatio;
-        this.numberOfGamesPlayed = numberOfGamesPlayed;
+    public PairStats(float successPercentage, long numberOfGamesWon, long numberOfGamesLost) {
+        this.successPercentage = successPercentage;
+        this.numberOfGamesWon = numberOfGamesWon;
+        this.numberOfGamesLost = numberOfGamesLost;
     }
 
-    public float getSuccessRatio() {
-        return successRatio;
+    public float getSuccessPercentage() {
+        return successPercentage;
     }
 
-    public void setSuccessRatio(float successRatio) {
-        this.successRatio = successRatio;
+    public void setSuccessPercentage(float successPercentage) {
+        this.successPercentage = successPercentage;
     }
 
-    public long getNumberOfGamesPlayed() {
-        return numberOfGamesPlayed;
+    public long getNumberOfGamesWon() {
+        return numberOfGamesWon;
     }
 
-    public void setNumberOfGamesPlayed(long numberOfGamesPlayed) {
-        this.numberOfGamesPlayed = numberOfGamesPlayed;
+    public void setNumberOfGamesWon(long numberOfGamesWon) {
+        this.numberOfGamesWon = numberOfGamesWon;
+    }
+
+    public long getNumberOfGamesLost() {
+        return numberOfGamesLost;
+    }
+
+    public void setNumberOfGamesLost(long numberOfGamesLost) {
+        this.numberOfGamesLost = numberOfGamesLost;
     }
 }

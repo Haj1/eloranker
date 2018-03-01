@@ -29,10 +29,14 @@
             <th>Rank</th>
             <th>Pair</th>
             <th>Success Ratio</th>
+            <th>Games Won</th>
+            <th>Games Lost</th>
             <tr th:each="pair,iter: ${pairs}">
                 <b><td th:text="${iter.index + 1} + ')'"></td></b>
                 <td th:text="${pair.player1.name} + ' and ' + ${pair.player2.name}"></td>
-                <td th:text="${#numbers.formatDecimal(pair.successPercentage,2,2)} + '%'"></td>
+                <td th:text="${#numbers.formatDecimal(pair.pairStats.successPercentage,2,2)} + '%'"></td>
+                <td th:text="${pair.pairStats.numberOfGamesWon}"></td>
+                <td th:text="${pair.pairStats.numberOfGamesLost}"></td>
             </tr>
         </table>
     </div>

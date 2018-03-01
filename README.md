@@ -9,6 +9,7 @@ Deployed on CF (app eloranker in org pivotallabs / space Beach-London). To deplo
 
 TODO List:
 
+ - DoublesPair (with PairStats) should be saved in DB to avoid calculation every time page loaded
  - Integrate with Meeple (https://meeple-api.cfapps.io/api.html) for Pivotal
  - Some basic error-catching
  - Allow edit of user
