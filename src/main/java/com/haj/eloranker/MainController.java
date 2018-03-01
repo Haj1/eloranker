@@ -104,10 +104,17 @@ public class MainController {
 			}
 		}
 
+        // TODO we want to filter out pairs that haven't played hardly any games otherwise it's way too verbose
 		// set success ratios of pairs
-		for(DoublesPair pair : pairs) {
-			float successRatio = successRatioOfPair(pair);
-			pair.setSuccessPercentage(successRatio * 100);
+        ListIterator<DoublesPair> iter = pairs.listIterator();
+        while(iter.hasNext()) {
+		    DoublesPair pair = iter.next();
+			PairStats pairStats = successRatioOfPair(pair);
+			if(pairStats.getNumberOfGamesPlayed() > 5) {
+                pair.setSuccessPercentage(pairStats.getSuccessRatio() * 100);
+            } else {
+			    iter.remove();
+            }
 		}
 
 		// sort pairs in order of success
@@ -180,7 +187,7 @@ public class MainController {
 		eloUserRepository.save(loser2);
 	}
 
-	private float successRatioOfPair(DoublesPair pair) {
+	private PairStats successRatioOfPair(DoublesPair pair) {
 		float successRatio = 0;
 		long won = doublesGameRepository.countByWinner1AndWinner2(pair.getPlayer1(), pair.getPlayer2());
 		// account for order being the other way around
@@ -189,15 +196,17 @@ public class MainController {
 		// account for order being the other way around
 		lost = lost + doublesGameRepository.countByLoser1AndLoser2(pair.getPlayer2(), pair.getPlayer1());
 
-		// if won is, successRatio should be 0.
-		if (won != 0) {
-			if (lost == 0) {
-				// win is non-zero. lost is zero.
-				successRatio = 1;
-			} else {
-				successRatio = (float) won / (won + lost);
-			}
-		}
-		return successRatio;
+		long numberOfGamesPlayed = won + lost;
+
+        // if won is, successRatio should be 0.
+        if (won != 0) {
+            if (lost == 0) {
+                // win is non-zero. lost is zero.
+                successRatio = 1;
+            } else {
+                successRatio = (float) won / (won + lost);
+            }
+        }
+        return new PairStats(successRatio, numberOfGamesPlayed);
 	}
 }
