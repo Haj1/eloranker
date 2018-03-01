@@ -104,7 +104,6 @@ public class MainController {
 			}
 		}
 
-        // TODO we want to filter out pairs that haven't played hardly any games otherwise it's way too verbose
 		// set success ratios of pairs
         ListIterator<DoublesPair> iter = pairs.listIterator();
         while(iter.hasNext()) {
